@@ -4,17 +4,32 @@ from selenium.common.exceptions import NoSuchElementException
 import chromedriver_autoinstaller
 import time
 import csv
+"""
+click()이 안될시 사용
+from selenium.webdriver.common.keys import Keys
+send_keys(Keys.ENTER)
+"""
 
 
-
+# 크롬 버젼 확인 후 새로운 드라이버 설치해서 실행
 chrome_ver = chromedriver_autoinstaller.get_chrome_version().split('.')[0]  #크롬드라이버 버전 확인
 
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--incognito") # 시크릿 모드
+chrome_options.add_argument("--headless") # 리눅스 GUI 없는 디스플레이 모드
+chrome_options.add_argument("--no-sandbox") # 리소스에 대한 엑서스 방지
+chrome_options.add_argument("--disable-setuid-sandbox") # 크롬 충돌 방지
+chrome_options.add_argument("--disable-dev-shm-usage") # 메모리 부족 에러 방지
+chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+
 try: # 크롬 드라이버
-    driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver')   
+    driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver', chrome_options=chrome_options)   
 except:
     chromedriver_autoinstaller.install(True)
-    driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver')
+    driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver', chrome_options=chrome_options)
 
+# WebDruverException Error 방지 코드 변경
+# driver = webdriver.Chrome(executable_path='/Users/cmblir/Python/Musinsa-Analysis/100/chromedriver')
 driver.implicitly_wait(10) # 10초정도 멈추기
 
 def popular_items(): # 인기있는 카테고리의 무신사가 추천해주는 브랜드 리스트 뽑기
@@ -99,7 +114,53 @@ def rank_age_gender(): # 연령및 성별 브랜드 선호도 분석
                     # time.sleep(0.5) 
     driver.quit()
 
+def reviews(): # 스타일 리뷰 (그냥 댓글의 경우 악성이 있을 수 있으므로 사진이 있는 것만) 뷴석 (판매 전략)
+    cloth_dict = {# "상의" : "001",
+                  "아우터": "002",
+                  "하의": "003"}
+    f = open('reviews2.csv', 'w') # 3만 다
+    reviews = csv.writer(f)
+    reviews.writerow(['category', 'review_type', 'rating', 'consumer', 'consumer rating', 'category', 'brand_name', 'review'])
+    for cloth in cloth_dict.keys():
+        time.sleep(0.1)
+        for i in range(1, 11): # 기존의 9000개 * 3(상의 하의 아우터) 데이터는 시간이 오래걸림 (1000개 데이터 기준 : 3시간 * 3)
+            driver.get(f'https://www.musinsa.com/ranking/best?period=now&age=ALL&mainCategory={cloth_dict[cloth]}&subCategory=&leafCategory=&price=&golf=false&kids=false&newProduct=false&exclusive=false&discount=false&soldOut=false&page={i}&viewType=small&priceMin=&priceMax=')
+            time.sleep(1)
+            for j in range(1, 91):
+                try:
+                    driver.find_element_by_xpath(f'//*[@id="goodsRankList"]/li[{j}]/div[3]/div[1]/a').click()
+                    time.sleep(1)
+                    try:
+                        driver.find_element_by_xpath(f'//*[@id="reviewSelectSort"]/option[5]').click()
+                        time.sleep(1)
+                        for i in range(1, 11):
+                            brand_name = driver.find_element_by_css_selector(f'#wrap_rel_product > div.list-box.box.list_related_product.owl-carousel.owl-theme > div.owl-wrapper-outer > div > div.owl-item.active > ul > li:nth-child(1) > div.li_inner > div.article_info > p.item_title > a')
+                            review = driver.find_element_by_css_selector(f'#reviewListFragment > div:nth-child({i}) > div.review-contents > div.review-contents__text')
+                            rating = driver.find_element_by_css_selector(f'#estimate_point > p > span') # 해당 상품의 평균 구매 만족도
+                            consumer = driver.find_element_by_css_selector(f'#reviewListFragment > div:nth-child({i}) > div.review-list__rating-wrap > span > span > span') # 구매자가 준 구매 만족도
+                            consumer_information = driver.find_element_by_css_selector(f'#reviewListFragment > div:nth-child({i}) > div.review-profile > div > div.review-profile__information > p')
+                            reviews.writerow([cloth, "낮은 평점", rating.text, consumer_information.text, consumer.get_attribute('style').split()[1], brand_name.text, review.text])
+                        driver.find_element_by_xpath(f'//*[@id="reviewSelectSort"]/option[4]').click()
+                        time.sleep(1)
+                        for h in range(1, 11):
+                            brand_name = driver.find_element_by_css_selector(f'#wrap_rel_product > div.list-box.box.list_related_product.owl-carousel.owl-theme > div.owl-wrapper-outer > div > div.owl-item.active > ul > li:nth-child(1) > div.li_inner > div.article_info > p.item_title > a')
+                            review = driver.find_element_by_css_selector(f'#reviewListFragment > div:nth-child({h}) > div.review-contents > div.review-contents__text')
+                            rating = driver.find_element_by_css_selector(f'#estimate_point > p > span') # 해당 상품의 평균 구매 만족도
+                            consumer_information = driver.find_element_by_css_selector(f'#reviewListFragment > div:nth-child({i}) > div.review-profile > div > div.review-profile__information > p')
+                            consumer = driver.find_element_by_css_selector(f'#reviewListFragment > div:nth-child({i}) > div.review-list__rating-wrap > span > span > span') # 구매자가 준 구매 만족도
+                            reviews.writerow([cloth, "높은 평점", rating.text, consumer_information.text, consumer.get_attribute('style').split()[1], brand_name.text, review.text])
+                        driver.back()
+                        time.sleep(2)
+                    except NoSuchElementException:
+                        driver.back()
+                        time.sleep(2)
+                except:
+                    pass
+    driver.quit()
+reviews()
+
+
 
 # top_brands() # 상위 9000등까지 랭크한 아이템 브랜드
 # popular_items() # 인기 항목 / 무신사가 추천하는 아이템의 1000개의 브랜드
-rank_age_gender() # 연령및 성별 브랜드 선호도 분석
+# rank_age_gender() # 연령및 성별 브랜드 선호도 분석
