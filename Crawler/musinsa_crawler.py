@@ -28,7 +28,7 @@ except:
     chromedriver_autoinstaller.install(True)
     driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver', chrome_options=chrome_options)
 
-# WebDruverException Error 방지 코드 변경
+# WebDruverException Error 방지 기존의 드라이버 버젼으로 지정
 # driver = webdriver.Chrome(executable_path='/Users/cmblir/Python/Musinsa-Analysis/100/chromedriver')
 driver.implicitly_wait(10) # 10초정도 멈추기
 
@@ -120,7 +120,7 @@ def reviews(): # 스타일 리뷰 (그냥 댓글의 경우 악성이 있을 수 
                   "하의": "003"}
     f = open('reviews2.csv', 'w') # 3만 다
     reviews = csv.writer(f)
-    reviews.writerow(['category', 'review_type', 'rating', 'consumer', 'consumer rating', 'category', 'brand_name', 'review'])
+    reviews.writerow(['category', 'review_type', 'rating', 'consumer', 'consumer rating', 'brand_name', 'review'])
     for cloth in cloth_dict.keys():
         time.sleep(0.1)
         for i in range(1, 11): # 기존의 9000개 * 3(상의 하의 아우터) 데이터는 시간이 오래걸림 (1000개 데이터 기준 : 3시간 * 3)
@@ -157,10 +157,10 @@ def reviews(): # 스타일 리뷰 (그냥 댓글의 경우 악성이 있을 수 
                 except:
                     pass
     driver.quit()
-reviews()
 
 
 
+# reviews() # 의류에 대한 리뷰정보 분석
 # top_brands() # 상위 9000등까지 랭크한 아이템 브랜드
 # popular_items() # 인기 항목 / 무신사가 추천하는 아이템의 1000개의 브랜드
 # rank_age_gender() # 연령및 성별 브랜드 선호도 분석
