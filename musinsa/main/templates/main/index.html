@@ -4,7 +4,8 @@
         <title>Intro</title>
     </head>
     <body>
-        <h1>현재 무신사의 상위 10위는</h1>
-        <h2>{{ top10.0 }}</h2>
+        {% for top in top10 %}
+        <p>{% top.'사이즈' %}</p>
+        {% endfor %}
     </body>
 </html>
