@@ -86,7 +86,4 @@ def word_analysis():
     tags = counts.most_common(40) 
 
     top10 = [i for i in tags[:10]]
-
-with open('/Users/cmblir/Python/Musinsa-Analysis/Analysis/top10_words.pickle', 'rb') as f:
-    top10 = pickle.load(f)
     
