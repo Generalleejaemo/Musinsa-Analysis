@@ -12,9 +12,6 @@ from Analysis import musinsa_py as mus# 상위 폴더에서 가져오기
 #     top10[i[0]] = i[1]
 
 # Create your views here.
-def index(request):
-    top10_lst = mus.top10
-    top10 = {}
-    for i in top10_lst:
-        top10[i[0]] = i[1]
-    return render(request, 'index.html', {'top10' : top10})
+def top10(request):
+    top10 = mus.top10
+    return render(request, 'top10.html', { 'top10' : top10 })
