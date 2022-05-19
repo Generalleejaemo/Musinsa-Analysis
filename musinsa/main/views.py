@@ -10,7 +10,7 @@ import pickle
 
 # Create your views here.
 
-with open("/Users/cmblir/Python/Musinsa-Analysis/musinsa/main/pickles/top10_words.pickle", 'rb') as f:
+with open("top10_words.pickle", 'rb') as f:
     top10 = pickle.load(f)
 
 def index(request):
