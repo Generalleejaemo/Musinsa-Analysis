@@ -89,4 +89,3 @@ def word_analysis():
 
 with open('/Users/cmblir/Python/Musinsa-Analysis/Analysis/top10_words.pickle', 'rb') as f:
     top10 = pickle.load(f)
-    
