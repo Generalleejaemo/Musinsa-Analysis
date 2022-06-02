@@ -16,8 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from main.views import index
+from main.views import *
  
 urlpatterns = [
     path('', index, name="index"),
+    path('top10/', top10_html, name="top10_html"),
+    path('good_top10/', good_top10_html, name="good_top10_html"),
+    path('bad_top10/', bad_top10_html, name="bad_top10_html"),
+    path('review/', reviews_html, name="reviews_html"),
     path('admin/', admin.site.urls),
 ]
