@@ -24,5 +24,6 @@ urlpatterns = [
     path('good_top10/', good_top10_html, name="good_top10_html"),
     path('bad_top10/', bad_top10_html, name="bad_top10_html"),
     path('review/', reviews_html, name="reviews_html"),
+    path('predict', predict, name="predict"),
     path('admin/', admin.site.urls),
 ]
