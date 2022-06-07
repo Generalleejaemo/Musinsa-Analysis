@@ -2,7 +2,8 @@
 <img src = "https://user-images.githubusercontent.com/75519839/172176646-213c370f-13b5-4efd-924c-08bb4ad3fa7c.png" width = "700px"></img>
 
 Extract Data From Musinsa Using Selenium & Selenium/Python
-<img src = "https://user-images.githubusercontent.com/75519839/153009836-fc8e76bd-754c-4061-81c8-7a3a396b8144.png" width="30px">
+<img src = "https://user-images.githubusercontent.com/75519839/153009836-fc8e76bd-754c-4061-81c8-7a3a396b8144.png" width="30px"></img>
+
 Link: [Musinsa](https://www.musinsa.com/app/)
 
 ***
